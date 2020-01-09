@@ -23,10 +23,13 @@ namespace SnowOverlay
         private readonly Size DEFAULT_SIZE = new Size(20, 20);
         private readonly Color DEFAULT_SNOWFLAKE_COLOR = Color.PaleTurquoise;
         private const int DEFAULT_TIMER_INTERVAL = 50;
+        private const int SNOW_ON_GROUND_HEIGHT = 10;
 
         private List<Snowflake> snowflake = new List<Snowflake>();
 
         private readonly Random rng = new Random();
+
+        private int snowflakeOnGroundCounter = 0;
                
         public Form1()
         {
@@ -50,7 +53,11 @@ namespace SnowOverlay
 
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
-            snowflake.ForEach(s => e.Graphics.FillEllipse(new SolidBrush(DEFAULT_SNOWFLAKE_COLOR), new Rectangle(s.Location, s.Size)));            
+            snowflake.ForEach(s => e.Graphics.FillEllipse(new SolidBrush(DEFAULT_SNOWFLAKE_COLOR), new Rectangle(s.Location, s.Size)));    
+            if (snowflakeOnGroundCounter > 20)
+            {
+                e.Graphics.FillRectangle(new SolidBrush(DEFAULT_SNOWFLAKE_COLOR), new Rectangle(0, Size.Height - SNOW_ON_GROUND_HEIGHT, Size.Width, SNOW_ON_GROUND_HEIGHT));
+            }
         }
 
         private void TmrTick_Tick(object sender, EventArgs e)
@@ -62,7 +69,13 @@ namespace SnowOverlay
                 {
                     s.Fall();
                 }
+                else
+                {
+                    snowflakeOnGroundCounter += 1;
+
+                }
             });
+            Debug.WriteLine(snowflake.Count);
             Invalidate();
         }
     }
